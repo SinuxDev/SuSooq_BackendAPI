@@ -1,6 +1,8 @@
 const User = require("../models/user");
 const { validationResult } = require("express-validator");
 const bcrypt = require("bcrypt");
+const JWT = require("jsonwebtoken");
+require("dotenv").config();
 
 // Register new user
 exports.register = async (req, res, next) => {
@@ -44,4 +46,45 @@ exports.register = async (req, res, next) => {
   }
 };
 
-exports.login = (req, res, next) => {};
+exports.login = async (req, res, next) => {
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    return res.status(400).json({
+      isSuccess: false,
+      message: errors.array()[0].msg,
+    });
+  }
+
+  const { email, password } = req.body;
+  try {
+    // Check if email exists
+    const userDoc = await User.findOne({ email });
+
+    if (!userDoc) {
+      throw new Error("Email doesn't exists");
+    }
+
+    //Check if password is match
+    const isMatch = bcrypt.compareSync(password, userDoc.password);
+
+    if (!isMatch) {
+      throw new Error("Wrong User Credentials");
+    }
+
+    //Create JWT Token
+    const token = JWT.sign({ userId: userDoc._id }, process.env.JWT_TOKEN_KEY, {
+      expiresIn: "1d",
+    });
+    return res.status(200).json({
+      token,
+      isSuccess: true,
+      message: "User Login Successfully",
+    });
+  } catch (err) {
+    return res.status(400).json({
+      isSuccess: false,
+      message: err.message,
+    });
+  }
+};
