@@ -82,7 +82,7 @@ exports.login = async (req, res, next) => {
       message: "User Login Successfully",
     });
   } catch (err) {
-    return res.status(400).json({
+    return res.status(401).json({
       isSuccess: false,
       message: err.message,
     });
