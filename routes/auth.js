@@ -8,7 +8,12 @@ const authController = require("../controller/auth");
 router.post(
   "/register",
   [
-    body("name").trim().not().notEmpty().withMessage("Name is required"),
+    body("name")
+      .trim()
+      .not()
+      .notEmpty()
+      .isLength({ min: 3 })
+      .withMessage("Name must be at least 3 characters long"),
     body("password")
       .trim()
       .notEmpty()
