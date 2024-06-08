@@ -39,7 +39,7 @@ exports.register = async (req, res, next) => {
   } catch (err) {
     return res.status(409).json({
       isSuccess: false,
-      message: errors.array()[0],
+      message: err.message,
     });
   }
 };
