@@ -88,3 +88,23 @@ exports.login = async (req, res, next) => {
     });
   }
 };
+
+exports.checkUserToken = async (req, res, next) => {
+  try {
+    const userDoc = await User.findById(req.userId).select("name email role");
+    if (!userDoc) {
+      throw new Error("Unauthorized");
+    }
+
+    return res.status(200).json({
+      isSuccess: true,
+      message: "User is authorized",
+      userDoc,
+    });
+  } catch (error) {
+    return res.status(401).json({
+      isSuccess: false,
+      message: err.message,
+    });
+  }
+};
