@@ -27,7 +27,7 @@ const productSchema = new Schema(
       default: null,
     },
     status: {
-      type: Boolean,
+      type: String,
       default: "pending",
     },
     seller: {
