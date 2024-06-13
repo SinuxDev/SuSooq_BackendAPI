@@ -38,4 +38,8 @@ router.post(
   productController.createProduct
 );
 
+// Get all products GET -> GetProducts (Get all products)
+
+router.get("/products/", authMiddleware, productController.getAllProducts);
+
 module.exports = router;
