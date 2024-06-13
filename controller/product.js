@@ -126,3 +126,27 @@ exports.updateProducts = async (req, res, next) => {
     });
   }
 };
+
+// Delete product DELETE -> DeleteProduct (Delete product)
+exports.deleteProduct = async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    const productDoc = await Product.findOne({ _id: id });
+
+    if (req.userId.toString() !== productDoc.seller.toString()) {
+      throw new Error("Unauthorized");
+    }
+
+    await Product.findByIdAndDelete(id);
+
+    return res.status(200).json({
+      isSuccess: true,
+      message: "Product Deleted Successfully",
+    });
+  } catch (err) {
+    return res.status(500).json({
+      isSuccess: false,
+      message: err.message,
+    });
+  }
+};
