@@ -45,3 +45,22 @@ exports.createProduct = async (req, res, next) => {
     });
   }
 };
+
+exports.getAllProducts = async (req, res, next) => {
+  try {
+    const products = await Product.find({ seller: req.userId }).sort({
+      createdAt: -1,
+    });
+
+    return res.status(200).json({
+      isSuccess: true,
+      message: "Products fetched successfully",
+      products,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      isSuccess: false,
+      message: err.message,
+    });
+  }
+};
