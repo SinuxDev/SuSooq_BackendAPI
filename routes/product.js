@@ -78,4 +78,11 @@ router.put(
   productController.updateProducts
 );
 
+// Delete product DELETE -> DeleteProduct (Delete product)
+router.delete(
+  "/delete-product/:id",
+  authMiddleware,
+  productController.deleteProduct
+);
+
 module.exports = router;
