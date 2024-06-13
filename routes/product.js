@@ -42,4 +42,7 @@ router.post(
 
 router.get("/products/", authMiddleware, productController.getAllProducts);
 
+// Get single product GET -> GetProduct (Get single product)
+router.get("/product/:id", authMiddleware, productController.getOldProduct);
+
 module.exports = router;
