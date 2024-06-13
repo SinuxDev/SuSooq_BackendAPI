@@ -80,3 +80,49 @@ exports.getOldProduct = async (req, res, next) => {
     });
   }
 };
+
+exports.updateProducts = async (req, res, next) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json({
+        isSuccess: false,
+        message: errors.array()[0].msg,
+      });
+    }
+
+    const {
+      product_name,
+      product_category,
+      product_description,
+      product_price,
+      product_used_for,
+      product_status,
+      seller_id,
+      product_id,
+    } = req.body;
+
+    if (req.userId.toString() !== seller_id.toString()) {
+      throw new Error("Unauthorized");
+    }
+
+    const product = await Product.findOne({ _id: product_id });
+    product.name = product_name;
+    product.description = product_description;
+    product.category = product_category;
+    product.price = product_price;
+    product.usedFor = product_used_for;
+    product.status_details = product_status;
+    product.save();
+
+    return res.status(200).json({
+      isSuccess: true,
+      message: "Product Updated Successfully",
+    });
+  } catch (err) {
+    return res.status(500).json({
+      isSuccess: false,
+      message: err.message,
+    });
+  }
+};
