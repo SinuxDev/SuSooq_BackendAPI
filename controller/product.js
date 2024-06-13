@@ -64,3 +64,19 @@ exports.getAllProducts = async (req, res, next) => {
     });
   }
 };
+
+exports.getOldProduct = async (req, res, next) => {
+  try {
+    const product = await Product.findOne({ _id: req.params.id });
+
+    return res.status(200).json({
+      isSuccess: true,
+      product,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      isSuccess: false,
+      message: err.message,
+    });
+  }
+};
