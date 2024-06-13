@@ -45,4 +45,37 @@ router.get("/products/", authMiddleware, productController.getAllProducts);
 // Get single product GET -> GetProduct (Get single product)
 router.get("/product/:id", authMiddleware, productController.getOldProduct);
 
+// Update product PUT -> UpdateProduct (Update product)
+router.put(
+  "/update-product",
+  authMiddleware,
+  [
+    body("product_name")
+      .trim()
+      .isLength({ min: 3 })
+      .withMessage("Name must be at least 3 characters long"),
+    body("product_category")
+      .trim()
+      .notEmpty()
+      .withMessage("Category is required"),
+    body("product_description")
+      .trim()
+      .isLength({ min: 10 })
+      .withMessage("Description must be at least 10 characters long"),
+    body("product_price")
+      .trim()
+      .isNumeric()
+      .withMessage("Price must be a number"),
+    body("product_used_for")
+      .trim()
+      .notEmpty()
+      .withMessage("Used for is required"),
+    body("product_status")
+      .isArray()
+      .optional()
+      .withMessage("Status details must be an array"),
+  ],
+  productController.updateProducts
+);
+
 module.exports = router;
