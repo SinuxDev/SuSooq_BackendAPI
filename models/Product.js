@@ -26,6 +26,9 @@ const productSchema = new Schema(
       type: Array,
       default: null,
     },
+    images: {
+      type: [String],
+    },
     status: {
       type: String,
       default: "pending",
