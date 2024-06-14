@@ -85,4 +85,11 @@ router.delete(
   productController.deleteProduct
 );
 
+// Upload product images POST -> UploadProductImages (Upload product images)
+router.post(
+  "/upload-images",
+  authMiddleware,
+  productController.uploadProductImages
+);
+
 module.exports = router;
