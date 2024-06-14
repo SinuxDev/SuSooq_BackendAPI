@@ -150,3 +150,9 @@ exports.deleteProduct = async (req, res, next) => {
     });
   }
 };
+
+// Upload product images
+exports.uploadProductImages = async (req, res, next) => {
+  console.log(req.files);
+  return res.json(req.files);
+};
