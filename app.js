@@ -5,6 +5,9 @@ const cors = require("cors");
 const multer = require("multer");
 require("dotenv").config();
 
+// Cloudinary
+const cloudinary = require("cloudinary").v2;
+
 const app = express();
 
 //Routes Path
@@ -31,6 +34,16 @@ const filterConfig = (req, file, cb) => {
   }
 };
 
+// Cloudinary Config
+async function configureCloudinary() {
+  //Configuration
+  cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+  });
+}
+
 // Global Middleware
 app.use(cors({ origin: "*" }));
 app.use(bodyParser.json());
@@ -45,13 +58,19 @@ app.use(
 app.use(authRoutes);
 app.use(productRoutes);
 
-mongooes
-  .connect(process.env.MONGO_URL)
-  .then(() => {
+(async function startServer() {
+  try {
+    await configureCloudinary();
+    console.log("Cloudinary configured successfully");
+
+    await mongooes.connect(process.env.MONGO_URL);
+    console.log("MongoDB connected successfully");
+
     app.listen(4000, () => {
       console.log("Server is running on port 4000");
     });
-  })
-  .catch((err) => {
-    console.log(err);
-  });
+  } catch (err) {
+    console.log("Error in start server : ", err);
+    process.exit(1);
+  }
+})();
