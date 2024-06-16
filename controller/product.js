@@ -211,3 +211,26 @@ exports.uploadProductImages = async (req, res, next) => {
     });
   }
 };
+
+// Get Product Images (Saved Images)
+exports.getProductImages = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const productDoc = await Product.findById(id).select("images");
+
+    if (!productDoc) {
+      throw new Error("Product not found");
+    }
+
+    return res.status(200).json({
+      isSuccess: true,
+      message: "Images fetched successfully",
+      SavedImages: productDoc,
+    });
+  } catch (err) {
+    return res.status(404).json({
+      isSuccess: false,
+      message: err.message,
+    });
+  }
+};
