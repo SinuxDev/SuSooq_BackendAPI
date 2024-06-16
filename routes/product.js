@@ -92,4 +92,11 @@ router.post(
   productController.uploadProductImages
 );
 
+// Get product images GET -> GetProductImages (Get product images)
+router.get(
+  "/product-images/:id",
+  authMiddleware,
+  productController.getProductImages
+);
+
 module.exports = router;
