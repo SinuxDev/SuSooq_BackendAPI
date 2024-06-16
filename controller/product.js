@@ -1,4 +1,5 @@
 const { validationResult } = require("express-validator");
+const cloudinary = require("cloudinary").v2;
 
 //Models
 const Product = require("../models/Product");
@@ -153,6 +154,41 @@ exports.deleteProduct = async (req, res, next) => {
 
 // Upload product images
 exports.uploadProductImages = async (req, res, next) => {
-  console.log(req.files);
-  return res.json(req.files);
+  const productImages = req.files;
+  const product_id = req.body.product_id;
+  let secureURLarray = [];
+
+  try {
+    if (!productImages) {
+      throw new Error("Please upload images");
+    }
+
+    productImages.forEach(async (image) => {
+      await cloudinary.uploader.upload(image.path, async (err, result) => {
+        if (err) {
+          throw new Error("Error uploading image");
+        }
+
+        const secureUrl = result.secure_url;
+        secureURLarray.push(secureUrl);
+
+        if (productImages.length === secureURLarray.length) {
+          await Product.findByIdAndUpdate(product_id, {
+            $push: { images: secureURLarray },
+          });
+
+          return res.status(200).json({
+            isSuccess: true,
+            message: "Images Uploaded Successfully",
+            secureURLarray,
+          });
+        }
+      });
+    });
+  } catch (err) {
+    return res.status(500).json({
+      isSuccess: false,
+      message: err.message,
+    });
+  }
 };
