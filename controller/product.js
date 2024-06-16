@@ -234,3 +234,28 @@ exports.getProductImages = async (req, res, next) => {
     });
   }
 };
+
+exports.deleteProductImages = async (req, res, next) => {
+  const product_id = req.params.productId;
+  const decodedImg = decodeURIComponent(req.params.imgToDelete);
+
+  const public_id = decodedImg.split("/").pop().split(".")[0];
+
+  try {
+    await Product.findByIdAndUpdate(product_id, {
+      $pull: { images: decodedImg },
+    });
+
+    await cloudinary.uploader.destroy(public_id);
+
+    return res.status(200).json({
+      isSuccess: true,
+      message: "Image Deleted Successfully",
+    });
+  } catch (err) {
+    return res.status(500).json({
+      isSuccess: false,
+      message: err.message,
+    });
+  }
+};
