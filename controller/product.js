@@ -131,11 +131,30 @@ exports.updateProducts = async (req, res, next) => {
 // Delete product DELETE -> DeleteProduct (Delete product)
 exports.deleteProduct = async (req, res, next) => {
   const { id } = req.params;
+
   try {
     const productDoc = await Product.findOne({ _id: id });
 
+    if (!productDoc) {
+      throw new Error("Product not found");
+    }
+
     if (req.userId.toString() !== productDoc.seller.toString()) {
       throw new Error("Unauthorized");
+    }
+
+    // Delete images from cloudinary server
+    if (productDoc.images && Array.isArray(productDoc.images)) {
+      const destroyPromise = productDoc.images.map((image) => {
+        const img_id = image.split("/").pop().split(".")[0];
+        return cloudinary.uploader.destroy(img_id);
+      });
+
+      try {
+        await Promise.all(destroyPromise);
+      } catch (err) {
+        throw new Error("Error deleting images");
+      }
     }
 
     await Product.findByIdAndDelete(id);
