@@ -99,4 +99,12 @@ router.get(
   productController.getProductImages
 );
 
+// Delete product image DELETE -> DeleteProductImage (Delete product image)
+// product/images/destroy/:productId/:imgToDelete
+router.delete(
+  "/product/images/destroy/:productId/:imgToDelete",
+  authMiddleware,
+  productController.deleteProductImages
+);
+
 module.exports = router;
