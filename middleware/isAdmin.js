@@ -1,7 +1,7 @@
 const isAdmin = async (req, res, next) => {
   const UNAUTHORIZED_MESSAGE = "Unauthorized Admin Access";
   try {
-    const { userId } = req.body;
+    const { userId } = req;
     console.log(userId);
     next();
   } catch (err) {
