@@ -13,6 +13,7 @@ const app = express();
 //Routes Path
 const authRoutes = require("./routes/auth");
 const productRoutes = require("./routes/product");
+const adminRoutes = require("./routes/admin");
 
 // Multer Config
 const storageConfig = multer.diskStorage({
@@ -57,6 +58,7 @@ app.use(
 // Routes
 app.use(authRoutes);
 app.use(productRoutes);
+app.use("/admin", adminRoutes);
 
 (async function startServer() {
   try {
