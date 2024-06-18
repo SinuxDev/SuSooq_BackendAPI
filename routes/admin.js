@@ -45,4 +45,20 @@ router.get(
   adminController.getAllUsers
 );
 
+// Ban User POST -> /admin/users/ban/:id
+router.post(
+  "/users/ban/:id",
+  authMiddleware,
+  adminMiddleware,
+  adminController.BanUser
+);
+
+// Unban User POST -> /admin/users/unban/:id
+router.post(
+  "/users/unban/:id",
+  authMiddleware,
+  adminMiddleware,
+  adminController.UnbanUser
+);
+
 module.exports = router;
