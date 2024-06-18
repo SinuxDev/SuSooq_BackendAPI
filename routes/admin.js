@@ -29,4 +29,12 @@ router.post(
   adminController.RejectProduct
 );
 
+// Rollback Product POST -> /admin/products/rollback/:id
+router.post(
+  "/products/rollback/:id",
+  authMiddleware,
+  adminMiddleware,
+  adminController.RollbackProduct
+);
+
 module.exports = router;
