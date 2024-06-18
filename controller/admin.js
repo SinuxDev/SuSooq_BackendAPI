@@ -101,3 +101,35 @@ exports.getAllUsers = async (req, res) => {
     });
   }
 };
+
+const updateUserStatus = async (req, res, status) => {
+  const { id } = req.params;
+
+  try {
+    const userDoc = await User.findById(id);
+
+    if (!userDoc) {
+      return res.status(404).json({
+        isSuccess: false,
+        message: "User not found",
+      });
+    }
+
+    userDoc.status = status;
+    await userDoc.save();
+
+    return res.status(200).json({
+      isSuccess: true,
+      message: `User was ${status} successfully`,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      isSuccess: false,
+      message: "Internal Server Error",
+    });
+  }
+};
+
+exports.BanUser = (req, res) => updateUserStatus(req, res, "banned");
+
+exports.UnbanUser = (req, res) => updateUserStatus(req, res, "active");
