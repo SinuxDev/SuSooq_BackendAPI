@@ -1,4 +1,5 @@
 const Product = require("../models/Product");
+const User = require("../models/user");
 
 exports.getAllProducts = async (req, res) => {
   try {
@@ -74,3 +75,29 @@ exports.RejectProduct = (req, res) => updateProductStatus(req, res, "rejected");
 
 exports.RollbackProduct = (req, res) =>
   updateProductStatus(req, res, "pending");
+
+// Get All Users
+exports.getAllUsers = async (req, res) => {
+  try {
+    const userDoc = await User.find()
+      .select("name email role createdAt status")
+      .sort({ createdAt: -1 });
+
+    if (!userDoc) {
+      return res.status(404).json({
+        isSuccess: false,
+        message: "Users not found",
+      });
+    }
+
+    return res.status(200).json({
+      isSuccess: true,
+      userDocs: userDoc,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      isSuccess: false,
+      message: "Internal Server Error",
+    });
+  }
+};
