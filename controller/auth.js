@@ -72,10 +72,16 @@ exports.login = async (req, res, next) => {
       throw new Error("Wrong User Credentials");
     }
 
+    // Account Status Check
+    if (userDoc.status === "banned") {
+      throw new Error("Your account is banned. Please contact admin");
+    }
+
     //Create JWT Token
     const token = JWT.sign({ userId: userDoc._id }, process.env.JWT_TOKEN_KEY, {
       expiresIn: "1d",
     });
+
     return res.status(200).json({
       token,
       isSuccess: true,
