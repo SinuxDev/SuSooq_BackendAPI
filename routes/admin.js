@@ -37,4 +37,12 @@ router.post(
   adminController.RollbackProduct
 );
 
+// Get All Users GET -> /admin/users
+router.get(
+  "/users",
+  authMiddleware,
+  adminMiddleware,
+  adminController.getAllUsers
+);
+
 module.exports = router;
