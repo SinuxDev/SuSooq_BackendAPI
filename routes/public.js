@@ -9,4 +9,7 @@ router.get("/products", publicController.getAllProducts);
 // Filter Products => /api/products/filters => GET
 router.get("/products/filters", publicController.filterProducts);
 
+// Get Single Product => /api/products/:id => GET
+router.get("/products/:id", publicController.getSingleProduct);
+
 module.exports = router;
