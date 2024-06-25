@@ -28,19 +28,35 @@ exports.getAllProducts = async (req, res, next) => {
 
 exports.filterProducts = async (req, res, next) => {
   try {
-    const { searchQuery } = req.query;
+    const { searchQuery, category } = req.query;
 
-    if (!searchQuery || typeof searchQuery !== "string") {
-      return res.status(400).json({
-        isSuccess: false,
-        message: "Invalid Search Query",
-      });
+    let query = {};
+
+    if (searchQuery) {
+      if (
+        (searchQuery === "searchQuery" && !searchQuery) ||
+        searchQuery === "" ||
+        searchQuery !== String(searchQuery)
+      )
+        return res.status(400).json({
+          isSuccess: false,
+          message: "Search query is required",
+        });
+
+      query = {
+        status: "approved",
+        $and: [{ name: { $regex: searchQuery, $options: "i" } }],
+      };
     }
 
-    const products = await Product.find({
-      status: "approved",
-      $and: [{ name: { $regex: searchQuery, $options: "i" } }],
-    }).sort({ createdAt: -1 });
+    if (category) {
+      query = {
+        status: "approved",
+        category,
+      };
+    }
+
+    const products = await Product.find(query).sort({ createdAt: -1 });
 
     if (!products || products.length <= 0) {
       return res.status(404).json({
