@@ -77,3 +77,30 @@ exports.filterProducts = async (req, res, next) => {
     });
   }
 };
+
+exports.getSingleProduct = async (req, res, next) => {
+  try {
+    const product = await Product.findById(req.params.id).populate(
+      "seller",
+      "email name"
+    );
+
+    if (!product) {
+      return res.status(404).json({
+        isSuccess: false,
+        message: "Product not found",
+      });
+    }
+
+    return res.status(200).json({
+      isSuccess: true,
+      message: "Product fetched successfully",
+      product,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      isSuccess: false,
+      message: err.message,
+    });
+  }
+};
