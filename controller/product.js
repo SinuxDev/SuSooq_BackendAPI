@@ -261,22 +261,56 @@ exports.deleteProductImages = async (req, res, next) => {
   }
 };
 
-exports.saveProduct = async (req, res, next) => {
+const handleProductSaveStatus = async (req, res, next, action) => {
   try {
     const { id } = req.params;
-    const product = await SavedProduct.create({
-      user_id: req.userId,
-      product_id: id,
-    });
+    let product;
 
-    if (!product) {
-      throw new Error("Error saving product");
+    if (action === "save") {
+      const existingProduct = await SavedProduct.findOne({
+        user_id: req.userId,
+        product_id: id,
+      });
+
+      if (existingProduct) {
+        return res.status(400).json({
+          isSuccess: false,
+          message: "Product already saved",
+        });
+      }
+
+      product = await SavedProduct.create({
+        user_id: req.userId,
+        product_id: id,
+      });
+
+      if (!product) {
+        throw new Error("Error saving product");
+      }
+
+      return res.status(201).json({
+        isSuccess: true,
+        message: "Product saved successfully",
+      });
     }
 
-    return res.status(201).json({
-      isSuccess: true,
-      message: "Product saved successfully",
-    });
+    if (action === "unsave") {
+      product = await SavedProduct.findOneAndDelete({
+        user_id: req.userId,
+        product_id: id,
+      });
+
+      if (!product) {
+        throw new Error("Error unsaving product");
+      }
+
+      return res.status(200).json({
+        isSuccess: true,
+        message: "Product unsaved successfully",
+      });
+    }
+
+    throw new Error("Invalid action");
   } catch (err) {
     return res.status(500).json({
       isSuccess: false,
@@ -284,6 +318,12 @@ exports.saveProduct = async (req, res, next) => {
     });
   }
 };
+
+exports.saveProduct = (req, res, next) =>
+  handleProductSaveStatus(req, res, next, "save");
+
+exports.unSaveProduct = (req, res, next) =>
+  handleProductSaveStatus(req, res, next, "unsave");
 
 exports.showSaveProduct = async (req, res, next) => {
   try {
@@ -299,30 +339,6 @@ exports.showSaveProduct = async (req, res, next) => {
       isSuccess: true,
       message: "Saved products fetched successfully",
       savedProducts,
-    });
-  } catch (err) {
-    return res.status(500).json({
-      isSuccess: false,
-      message: err.message,
-    });
-  }
-};
-
-exports.unSaveProduct = async (req, res, next) => {
-  try {
-    const { id } = req.params;
-    const product = await SavedProduct.findOneAndDelete({
-      user_id: req.userId,
-      product_id: id,
-    });
-
-    if (!product) {
-      throw new Error("Error unsaving product");
-    }
-
-    return res.status(200).json({
-      isSuccess: true,
-      message: "Product unsaved successfully",
     });
   } catch (err) {
     return res.status(500).json({
