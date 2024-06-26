@@ -10,6 +10,8 @@ const savedProductSchema = new Schema(
     product_id: {
       type: Schema.Types.ObjectId,
       ref: "Products",
+      required: true,
+      unique: true,
     },
   },
   {
