@@ -117,4 +117,11 @@ router.post(
 // Show Save product GET -> ShowSaveProduct (Show save product)
 router.get("/save-products", authMiddleware, productController.showSaveProduct);
 
+// Unsave product DELETE -> UnsaveProduct (Unsave product)
+router.delete(
+  "/unsave-products/:id",
+  authMiddleware,
+  productController.unSaveProduct
+);
+
 module.exports = router;
