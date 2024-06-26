@@ -284,3 +284,50 @@ exports.saveProduct = async (req, res, next) => {
     });
   }
 };
+
+exports.showSaveProduct = async (req, res, next) => {
+  try {
+    const savedProducts = await SavedProduct.find({
+      user_id: req.userId,
+    }).populate("product_id", "name description category price images");
+
+    if (!savedProducts || savedProducts.length === 0) {
+      throw new Error("No saved products found");
+    }
+
+    return res.status(200).json({
+      isSuccess: true,
+      message: "Saved products fetched successfully",
+      savedProducts,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      isSuccess: false,
+      message: err.message,
+    });
+  }
+};
+
+exports.unSaveProduct = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const product = await SavedProduct.findOneAndDelete({
+      user_id: req.userId,
+      product_id: id,
+    });
+
+    if (!product) {
+      throw new Error("Error unsaving product");
+    }
+
+    return res.status(200).json({
+      isSuccess: true,
+      message: "Product unsaved successfully",
+    });
+  } catch (err) {
+    return res.status(500).json({
+      isSuccess: false,
+      message: err.message,
+    });
+  }
+};
