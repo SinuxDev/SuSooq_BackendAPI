@@ -107,4 +107,14 @@ router.delete(
   productController.deleteProductImages
 );
 
+// Save product POST -> SaveProduct (Save product)
+router.post(
+  "/save-products/:id",
+  authMiddleware,
+  productController.saveProduct
+);
+
+// Show Save product GET -> ShowSaveProduct (Show save product)
+router.get("/save-products", authMiddleware, productController.showSaveProduct);
+
 module.exports = router;
