@@ -3,6 +3,7 @@ const cloudinary = require("cloudinary").v2;
 
 //Models
 const Product = require("../models/Product");
+const SavedProduct = require("../models/SavedProduct");
 
 exports.createProduct = async (req, res, next) => {
   const errors = validationResult(req);
@@ -251,6 +252,30 @@ exports.deleteProductImages = async (req, res, next) => {
     return res.status(200).json({
       isSuccess: true,
       message: "Image Deleted Successfully",
+    });
+  } catch (err) {
+    return res.status(500).json({
+      isSuccess: false,
+      message: err.message,
+    });
+  }
+};
+
+exports.saveProduct = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const product = await SavedProduct.create({
+      user_id: req.userId,
+      product_id: id,
+    });
+
+    if (!product) {
+      throw new Error("Error saving product");
+    }
+
+    return res.status(201).json({
+      isSuccess: true,
+      message: "Product saved successfully",
     });
   } catch (err) {
     return res.status(500).json({
