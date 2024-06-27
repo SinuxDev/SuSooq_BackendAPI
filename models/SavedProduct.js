@@ -11,12 +11,14 @@ const savedProductSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "Products",
       required: true,
-      unique: true,
     },
   },
   {
     timestamps: true,
   }
 );
+
+// Create a unique index on the combination of user_id and product_id
+savedProductSchema.index({ user_id: 1, product_id: 1 }, { unique: true });
 
 module.exports = model("SavedProducts", savedProductSchema);

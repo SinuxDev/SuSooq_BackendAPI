@@ -284,10 +284,6 @@ const handleProductSaveStatus = async (req, res, next, action) => {
         product_id: id,
       });
 
-      if (!product) {
-        throw new Error("Error saving product");
-      }
-
       return res.status(201).json({
         isSuccess: true,
         message: "Product saved successfully",
@@ -301,7 +297,10 @@ const handleProductSaveStatus = async (req, res, next, action) => {
       });
 
       if (!product) {
-        throw new Error("Error unsaving product");
+        return res.status(400).json({
+          isSuccess: false,
+          message: "Product not found",
+        });
       }
 
       return res.status(200).json({
@@ -312,6 +311,14 @@ const handleProductSaveStatus = async (req, res, next, action) => {
 
     throw new Error("Invalid action");
   } catch (err) {
+    if (err.code === 11000) {
+      // Duplicate key error
+      return res.status(400).json({
+        isSuccess: false,
+        message: "Product already saved",
+      });
+    }
+
     return res.status(500).json({
       isSuccess: false,
       message: err.message,
