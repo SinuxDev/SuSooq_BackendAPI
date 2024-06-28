@@ -3,6 +3,7 @@ const router = express.Router();
 const { body } = require("express-validator");
 
 const productController = require("../controller/product");
+const bidController = require("../controller/bid");
 const authMiddleware = require("../middleware/auth");
 
 // Create new product POST -> CreateProduct (Add product)
@@ -122,6 +123,26 @@ router.delete(
   "/unsave-products/:id",
   authMiddleware,
   productController.unSaveProduct
+);
+
+// Create new bid POST -> CreateBid (Add bid)
+router.post(
+  "/add-bid",
+  [
+    body("product_id").trim().notEmpty().withMessage("Product ID is required"),
+    body("seller_id").trim().notEmpty().withMessage("Seller ID is required"),
+    body("buyer_id").trim().notEmpty().withMessage("Buyer ID is required"),
+    body("comment")
+      .trim()
+      .isLength({ min: 3 })
+      .withMessage("Comment must be at least 3 characters long"),
+    body("phone_num")
+      .trim()
+      .isNumeric()
+      .withMessage("Phone number is required"),
+  ],
+  authMiddleware,
+  bidController.saveNewBid
 );
 
 module.exports = router;
