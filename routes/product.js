@@ -145,4 +145,11 @@ router.post(
   bidController.saveNewBid
 );
 
+// Get All bid by product ID GET -> GetBidByProductId (Get bid by product ID)
+router.get(
+  "/get-bids/:product_id",
+  authMiddleware,
+  bidController.getBidByProductId
+);
+
 module.exports = router;
