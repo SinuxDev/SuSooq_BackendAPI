@@ -19,6 +19,10 @@ const NotificationSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "User",
     },
+    phone_number: {
+      required: true,
+      type: String,
+    },
     isRead: {
       default: false,
       type: Boolean,
