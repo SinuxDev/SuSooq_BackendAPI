@@ -4,6 +4,8 @@ const { body } = require("express-validator");
 
 const productController = require("../controller/product");
 const bidController = require("../controller/bid");
+const NotiController = require("../controller/noti");
+
 const authMiddleware = require("../middleware/auth");
 
 // Create new product POST -> CreateProduct (Add product)
@@ -150,6 +152,20 @@ router.get(
   "/get-bids/:product_id",
   authMiddleware,
   bidController.getBidByProductId
+);
+
+// Push Notification POST -> PushNotification (Push notification)
+router.post(
+  "/push-notification",
+  authMiddleware,
+  NotiController.pushNotification
+);
+
+// Get all notifications GET -> GetNotifications (Get all notifications)
+router.get(
+  "/get-notifications",
+  authMiddleware,
+  NotiController.getNotifications
 );
 
 module.exports = router;
