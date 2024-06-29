@@ -168,4 +168,7 @@ router.get(
   NotiController.getNotifications
 );
 
+// Mark as read PUT -> MarkAsRead (Mark as read)
+router.put("/mark-as-read/:id", authMiddleware, NotiController.markAsRead);
+
 module.exports = router;
