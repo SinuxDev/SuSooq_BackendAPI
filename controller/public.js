@@ -1,23 +1,37 @@
 const Product = require("../models/Product");
 
-exports.getAllProducts = async (req, res, next) => {
-  try {
-    const products = await Product.find({ status: "approved" }).sort({
-      createdAt: -1,
-    });
+exports.getAllProducts = async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const perPage = parseInt(req.query.perPage) || 6;
 
-    if (!products) {
+  try {
+    const products = await Product.find({ status: "approved" })
+      .sort({
+        createdAt: -1,
+      })
+      .skip((page - 1) * perPage)
+      .limit(perPage);
+
+    if (!products || products.length === 0) {
       return res.status(404).json({
         isSuccess: false,
         message: "Products not found",
       });
     }
 
-    return res.status(200).json({
+    const totalProducts = await Product.countDocuments({ status: "approved" });
+    const totalPages = Math.ceil(totalProducts / perPage);
+
+    const response = {
       isSuccess: true,
       message: "Products fetched successfully",
       products,
-    });
+      totalProducts,
+      totalPages,
+      currentPage: page, // Ensure currentPage is sent correctly
+    };
+
+    return res.status(200).json(response);
   } catch (err) {
     return res.status(500).json({
       isSuccess: false,

@@ -332,20 +332,35 @@ exports.saveProduct = (req, res, next) =>
 exports.unSaveProduct = (req, res, next) =>
   handleProductSaveStatus(req, res, next, "unsave");
 
-exports.showSaveProduct = async (req, res, next) => {
+exports.showSaveProduct = async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const perPage = parseInt(req.query.perPage) || 6;
+
   try {
     const savedProducts = await SavedProduct.find({
       user_id: req.userId,
-    }).populate("product_id", "name description category price images");
+    })
+      .populate("product_id", "name description category price images")
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * perPage)
+      .limit(perPage);
 
     if (!savedProducts || savedProducts.length === 0) {
       throw new Error("No saved products found");
     }
 
+    const totalSavedProducts = await SavedProduct.find({
+      user_id: req.userId,
+    }).countDocuments({});
+    const totalPages = Math.ceil(totalSavedProducts / perPage);
+
     return res.status(200).json({
       isSuccess: true,
       message: "Saved products fetched successfully",
       savedProducts,
+      totalPages,
+      totalSavedProducts,
+      currentPage: page,
     });
   } catch (err) {
     return res.status(500).json({
