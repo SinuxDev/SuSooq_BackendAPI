@@ -56,3 +56,31 @@ exports.getNotifications = async (req, res) => {
     });
   }
 };
+
+exports.markAsRead = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const notification = await Notification.findById(id);
+
+    if (!notification) {
+      return res.status(400).json({
+        isSuccess: false,
+        message: "Notification not found",
+      });
+    }
+
+    notification.isRead = true;
+    await notification.save();
+
+    return res.status(200).json({
+      isSuccess: true,
+      message: "Notification marked as read",
+    });
+  } catch (err) {
+    return res.status(500).json({
+      isSuccess: false,
+      message: "Internal Server Error",
+    });
+  }
+};
