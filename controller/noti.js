@@ -84,3 +84,44 @@ exports.markAsRead = async (req, res) => {
     });
   }
 };
+
+exports.deleteNotification = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const notification = await Notification.findByIdAndDelete(id);
+
+    if (!notification) {
+      return res.status(400).json({
+        isSuccess: false,
+        message: "Notification not found",
+      });
+    }
+
+    return res.status(200).json({
+      isSuccess: true,
+      message: "Notification deleted successfully",
+    });
+  } catch (err) {
+    return res.status(500).json({
+      isSuccess: false,
+      message: "Internal Server Error",
+    });
+  }
+};
+
+exports.deleteAllNotifications = async (req, res) => {
+  try {
+    await Notification.deleteMany({ seller_id: req.userId });
+
+    return res.status(200).json({
+      isSuccess: true,
+      message: "All notifications deleted successfully",
+    });
+  } catch (err) {
+    return res.status(500).json({
+      isSuccess: false,
+      message: "Internal Server Error",
+    });
+  }
+};

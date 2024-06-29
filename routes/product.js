@@ -171,4 +171,18 @@ router.get(
 // Mark as read PUT -> MarkAsRead (Mark as read)
 router.put("/mark-as-read/:id", authMiddleware, NotiController.markAsRead);
 
+// Delete notification DELETE -> DeleteNotification (Delete notification)
+router.delete(
+  "/delete-notification/:id",
+  authMiddleware,
+  NotiController.deleteNotification
+);
+
+// Delete all notifications DELETE -> DeleteAllNotifications (Delete all notifications)
+router.delete(
+  "/delete-all-notifications",
+  authMiddleware,
+  NotiController.deleteAllNotifications
+);
+
 module.exports = router;
