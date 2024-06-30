@@ -4,9 +4,9 @@ exports.saveNewBid = async (req, res) => {
   try {
     const { product_id, seller_id, buyer_id, comment, phone_num } = req.body;
 
-    const BidDocs = await Bid.findOne({ seller_id });
+    const BidDocs = await Bid.findOne({ seller_id: seller_id });
 
-    if (BidDocs) {
+    if (BidDocs == seller_id) {
       return res.status(400).json({
         isSuccess: false,
         message: "Can't bid on your own product",
