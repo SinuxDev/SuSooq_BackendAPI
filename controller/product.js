@@ -178,6 +178,15 @@ exports.uploadProductImages = async (req, res, next) => {
   const product_id = req.body.product_id;
   let secureURLarray = [];
 
+  const productDoc = await Product.findOne({ _id: product_id });
+
+  if (req.userId.toString() !== productDoc.seller.toString()) {
+    return res.status(401).json({
+      isSuccess: false,
+      message: "Unauthorized",
+    });
+  }
+
   try {
     if (!productImages) {
       throw new Error("Please upload images");
@@ -217,7 +226,14 @@ exports.uploadProductImages = async (req, res, next) => {
 exports.getProductImages = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const productDoc = await Product.findById(id).select("images");
+    const productDoc = await Product.findById(id).select("images seller");
+
+    if (req.userId.toString() !== productDoc.seller.toString()) {
+      return res.status(401).json({
+        isSuccess: false,
+        message: "Unauthorized",
+      });
+    }
 
     if (!productDoc) {
       throw new Error("Product not found");
@@ -239,6 +255,15 @@ exports.getProductImages = async (req, res, next) => {
 exports.deleteProductImages = async (req, res, next) => {
   const product_id = req.params.productId;
   const decodedImg = decodeURIComponent(req.params.imgToDelete);
+
+  const productDoc = await Product.findOne({ _id: product_id });
+
+  if (req.userId.toString() !== productDoc.seller.toString()) {
+    return res.status(401).json({
+      isSuccess: false,
+      message: "Unauthorized",
+    });
+  }
 
   const public_id = decodedImg.split("/").pop().split(".")[0];
 
