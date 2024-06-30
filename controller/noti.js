@@ -61,7 +61,21 @@ exports.markAsRead = async (req, res) => {
   try {
     const { id } = req.params;
 
+    if (!id) {
+      return res.status(400).json({
+        isSuccess: false,
+        message: "Notification id is required",
+      });
+    }
+
     const notification = await Notification.findById(id);
+
+    if (req.userId.toString() !== notification.seller_id.toString()) {
+      return res.status(401).json({
+        isSuccess: false,
+        message: "Unauthorized",
+      });
+    }
 
     if (!notification) {
       return res.status(400).json({
@@ -89,12 +103,26 @@ exports.deleteNotification = async (req, res) => {
   try {
     const { id } = req.params;
 
+    if (!id) {
+      return res.status(400).json({
+        isSuccess: false,
+        message: "Notification id is required",
+      });
+    }
+
     const notification = await Notification.findByIdAndDelete(id);
 
     if (!notification) {
       return res.status(400).json({
         isSuccess: false,
         message: "Notification not found",
+      });
+    }
+
+    if (req.userId.toString() !== notification.seller_id.toString()) {
+      return res.status(401).json({
+        isSuccess: false,
+        message: "Unauthorized",
       });
     }
 
@@ -112,6 +140,22 @@ exports.deleteNotification = async (req, res) => {
 
 exports.deleteAllNotifications = async (req, res) => {
   try {
+    const notification = await Notification.findById(req.userId);
+
+    if (!notification) {
+      return res.status(400).json({
+        isSuccess: false,
+        message: "No notifications found",
+      });
+    }
+
+    if (req.userId.toString() !== notification.seller_id.toString()) {
+      return res.status(401).json({
+        isSuccess: false,
+        message: "Unauthorized",
+      });
+    }
+
     await Notification.deleteMany({ seller_id: req.userId });
 
     return res.status(200).json({

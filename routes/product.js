@@ -164,6 +164,14 @@ router.post(
 // Get all notifications GET -> GetNotifications (Get all notifications)
 router.get(
   "/get-notifications",
+  [
+    body("phone_number")
+      .trim()
+      .notEmpty()
+      .withMessage("Phone number is required"),
+    body("title").trim().notEmpty().withMessage("Title is required"),
+    body("message").trim().notEmpty().withMessage("Message is required"),
+  ],
   authMiddleware,
   NotiController.getNotifications
 );
